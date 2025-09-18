@@ -1,6 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
- binaryTargets   = ["native", "debian-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -19,6 +19,21 @@ model def_users {
   created_on      DateTime? @default(now()) @db.Timestamp(6)
   last_updated_by Int?
   last_updated_on DateTime? @default(now()) @db.Timestamp(6)
+
+  @@schema("agreegate")
+}
+
+model def_persons {
+  user_id    Int     @id
+  first_name String? @db.VarChar(20)
+  last_name  String? @db.VarChar(20)
+
+  @@schema("agreegate")
+}
+
+model def_user_credentials {
+  user_id  Int    @id
+  password String
 
   @@schema("agreegate")
 }
