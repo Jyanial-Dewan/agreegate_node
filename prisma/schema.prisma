@@ -1,0 +1,24 @@
+generator client {
+  provider        = "prisma-client-js"
+ binaryTargets   = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["agreegate"]
+}
+
+model def_users {
+  user_id         Int       @id @default(autoincrement())
+  user_name       String?   @db.VarChar(20)
+  user_type       String?   @db.VarChar(20)
+  email_addresses Json?
+  profile_picture Json?
+  created_by      Int?
+  created_on      DateTime? @default(now()) @db.Timestamp(6)
+  last_updated_by Int?
+  last_updated_on DateTime? @default(now()) @db.Timestamp(6)
+
+  @@schema("agreegate")
+}
