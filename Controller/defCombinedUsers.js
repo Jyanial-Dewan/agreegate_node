@@ -151,7 +151,6 @@ exports.updateCombinedUser = async (req, res) => {
         user_name: user_name,
         user_type: user_type,
         email_addresses: [email_address],
-
         profile_picture: profile_picture,
       },
     });
