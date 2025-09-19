@@ -3,6 +3,7 @@ const defCombinedUsersController = require("../Controller/defCombinedUsers");
 
 const router = Router();
 
-router.post("/", defCombinedUsersController.createCombinedUser);
+router.post("/register", defCombinedUsersController.createCombinedUser);
+router.get("/:userId", defCombinedUsersController.getSingleCombinedUser);
 
 module.exports = router;
