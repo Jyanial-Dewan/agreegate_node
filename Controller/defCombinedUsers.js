@@ -66,6 +66,18 @@ exports.createCombinedUser = async (req, res) => {
       thumbnail: "uploads/profiles/default/thumbnail.jpg",
     };
 
+    const existUser = await prisma.def_users.findFirst({
+      where: {
+        user_name,
+      },
+    });
+
+    if (existUser) {
+      return res.status(409).json({
+        message: "Username is already exist.",
+      });
+    }
+
     const newUser = await prisma.def_users.create({
       data: {
         user_name: user_name,
@@ -122,6 +134,18 @@ exports.updateCombinedUser = async (req, res) => {
       original: "uploads/profiles/default/profile.jpg",
       thumbnail: "uploads/profiles/default/thumbnail.jpg",
     };
+
+    const existUser = await prisma.def_users.findFirst({
+      where: {
+        user_name,
+      },
+    });
+
+    if (existUser) {
+      return res.status(409).json({
+        message: "Username is already exist.",
+      });
+    }
 
     const uniqueUser = await prisma.def_users.findUnique({
       where: {
