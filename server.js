@@ -2,6 +2,7 @@ const express = require("express");
 const fetch = require("node-fetch");
 const cors = require("cors");
 const { default: axios } = require("axios");
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const options = {
@@ -20,6 +21,7 @@ app.get("/api/geo", async (req, res) => {
   }
 });
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors(options));
 app.use(require("./Routes/index"));

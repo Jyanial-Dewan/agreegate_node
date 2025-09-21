@@ -3,6 +3,6 @@ const authMeController = require("../Controller/authMeController");
 
 const router = Router();
 
-router.post("/", authMeController.user);
+router.get("/", authMeController.user);
 
 module.exports = router;
