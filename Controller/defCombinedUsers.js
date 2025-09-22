@@ -206,3 +206,45 @@ exports.updateCombinedUser = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+exports.updateProfileImage = async (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded." });
+    }
+
+    const filePath = req.file.path.replace(/\\/g, "/");
+    const thumbnailPath = req.file.thumbnailPath
+      ? req.file.thumbnailPath.replace(/\\/g, "/")
+      : null;
+
+    // Validate user ID
+    const findDefUserId = await prisma.def_users.findUnique({
+      where: { user_id: Number(user_id) },
+    });
+
+    if (!findDefUserId) {
+      return res.status(404).json({ message: "User ID not found." });
+    }
+
+    // Update user with profile picture and thumbnail
+    await prisma.def_users.update({
+      where: { user_id: Number(user_id) },
+      data: {
+        profile_picture: {
+          original: filePath || findDefUserId.profile_picture,
+          thumbnail: thumbnailPath || findDefUserId.profile_thumbnail,
+        },
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Profile image updated successfully." });
+  } catch (error) {
+    console.error("Error updating profile image:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};

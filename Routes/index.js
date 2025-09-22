@@ -9,10 +9,11 @@ const verifyUser = require("../Middleware/verifyUser");
 const routes = Router();
 routes.use("/api/auth", authentication);
 routes.use("/api/users", defUsersRoutes);
-routes.use("/api/combined_users", defCombinedUsersRoutes);
 routes.use("/api/geo", ipRoutes);
 routes.use(verifyUser);
 
+routes.use("/api/combined_users", defCombinedUsersRoutes);
+routes.use("/api/combined_users", defCombinedUsersRoutes);
 routes.use("/api/auth/verify_user", authUserRoutes);
 
 module.exports = routes;
