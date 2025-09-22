@@ -13,7 +13,6 @@ routes.use("/api/geo", ipRoutes);
 routes.use(verifyUser);
 
 routes.use("/api/combined_users", defCombinedUsersRoutes);
-routes.use("/api/combined_users", defCombinedUsersRoutes);
 routes.use("/api/auth/verify_user", authUserRoutes);
 
 module.exports = routes;
