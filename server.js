@@ -1,7 +1,5 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const cors = require("cors");
-const { default: axios } = require("axios");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 const multer = require("multer");
@@ -15,18 +13,10 @@ const options = {
 
 const app = express();
 
-app.get("/api/geo", async (req, res) => {
-  try {
-    const response = await axios.get("http://ip-api.com/json/");
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors(options));
+
 app.use(require("./Routes/index"));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
