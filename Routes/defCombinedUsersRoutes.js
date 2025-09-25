@@ -7,6 +7,10 @@ const router = Router();
 router.post("/register", defCombinedUsersController.createCombinedUser);
 router.get("/:userId", defCombinedUsersController.getSingleCombinedUser);
 router.put("/:userId", defCombinedUsersController.updateCombinedUser);
+router.post(
+  "/change_password/:user_id",
+  defCombinedUsersController.changeUserPassword
+);
 router.put(
   "/update_profile_image/:user_id",
   // (req, res, next) => {

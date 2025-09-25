@@ -249,3 +249,68 @@ exports.updateProfileImage = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+exports.changeUserPassword = async (req, res) => {
+  const { old_password, new_password } = req.body;
+  const { user_id } = req.params;
+
+  if (!old_password || !new_password) {
+    return res.status(400).json({ message: "Password Required" });
+  }
+
+  /**Verify password*/
+  const verifyPassword = (storedData, old_password) => {
+    return new Promise((resolve, reject) => {
+      const [, digest, iterations, salt, storedHash] = storedData.split(/[:$]/);
+
+      const iterationsNumber = parseInt(iterations, 10);
+
+      crypto.pbkdf2(
+        old_password,
+        salt,
+        iterationsNumber,
+        32,
+        digest,
+        (err, derivedKey) => {
+          if (err) return reject(err);
+
+          const isMatch = storedHash === derivedKey.toString("hex");
+          resolve(isMatch);
+        }
+      );
+    });
+  };
+
+  try {
+    const userCredential = await prisma.def_user_credentials.findUnique({
+      where: {
+        user_id: +user_id,
+      },
+    });
+    if (userCredential) {
+      const passwordResult = await verifyPassword(
+        userCredential.password,
+        old_password
+      );
+      if (passwordResult) {
+        const userPassword = await prisma.def_user_credentials.update({
+          where: {
+            user_id: Number(user_id),
+          },
+          data: {
+            password: await hashPassword(old_password),
+          },
+        });
+        if (userPassword) {
+          return res
+            .status(200)
+            .json({ message: "Password is updated Successfully " });
+        }
+      } else {
+        return res.status(401).json({ message: "Invalid password." });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
