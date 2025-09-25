@@ -209,6 +209,7 @@ exports.updateCombinedUser = async (req, res) => {
 
 exports.updateProfileImage = async (req, res) => {
   const { user_id } = req.params;
+  console.log(req.file, "dfdsf");
 
   try {
     if (!req.file) {
