@@ -37,3 +37,48 @@ model def_user_credentials {
 
   @@schema("agreegate")
 }
+
+model def_client_info {
+  device_id                Int                        @id @default(autoincrement())
+  user_id                  Int
+  browser_name             String?                    @db.VarChar(100)
+  browser_version          String?                    @db.VarChar(50)
+  browser_type             String?                    @db.VarChar(50)
+  cpu_architecture         String?                    @db.VarChar(50)
+  device_type              String?                    @db.VarChar(50)
+  device_model             String?                    @db.VarChar(100)
+  device_vendor            String?                    @db.VarChar(100)
+  engine_name              String?                    @db.VarChar(50)
+  engine_version           String?                    @db.VarChar(50)
+  os_name                  String?                    @db.VarChar(50)
+  os_version               String?                    @db.VarChar(50)
+  user_agent               String?
+  ip_address               String?                    @db.VarChar(50)
+  zip                      String?                    @db.VarChar(20)
+  timezone                 String?                    @db.VarChar(50)
+  region_name              String?                    @db.VarChar(100)
+  region                   String?                    @db.VarChar(100)
+  ip_org                   String?                    @db.VarChar(255)
+  country_code             String?                    @db.VarChar(10)
+  country                  String?                    @db.VarChar(100)
+  city                     String?                    @db.VarChar(100)
+  autonomus_system         String?                    @db.VarChar(100)
+  created_at               DateTime?                  @default(now()) @db.Timestamp(6)
+  def_client_location_info def_client_location_info[]
+
+  @@schema("agreegate")
+}
+
+model def_client_location_info {
+  device_id          Int
+  user_id            Int?
+  latitude           Decimal?        @db.Decimal(9, 7)
+  longitude          Decimal?        @db.Decimal(9, 7)
+  connection_time    DateTime?       @db.Timestamp(6)
+  disconnection_time DateTime?       @db.Timestamp(6)
+  created_at         DateTime?       @default(now()) @db.Timestamp(6)
+  connection_id      String          @id
+  def_client_info    def_client_info @relation(fields: [device_id], references: [device_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_device")
+
+  @@schema("agreegate")
+}
