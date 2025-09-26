@@ -32,13 +32,17 @@ const socket = (io) => {
     socket.on(
       "ClientLocation",
       async ({ latitude, longitude, device_id, user_id }) => {
-        await axios.post(`${nodeUrl}/api/client_location_info`, {
-          connection_id: socket.id,
-          device_id,
-          user_id,
-          latitude,
-          longitude,
-        });
+        try {
+          await axios.post(`${nodeUrl}/api/client_location_info`, {
+            connection_id: socket.id,
+            device_id,
+            user_id,
+            latitude,
+            longitude,
+          });
+        } catch (error) {
+          console.log(error);
+        }
       }
     );
 

@@ -2,13 +2,14 @@ const prisma = require("../DB/db.config");
 
 exports.addClientInfo = async (req, res) => {
   const {
-    userId,
+    user_id,
     browser_name,
     browser_version,
     browser_type,
     cpu_architecture,
     device_type,
     device_model,
+    device_vendor,
     engine_name,
     engine_version,
     os_name,
@@ -29,7 +30,7 @@ exports.addClientInfo = async (req, res) => {
   try {
     const existingClient = await prisma.def_client_info.findFirst({
       where: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
         ip_address,
         user_agent,
         ip_org,
@@ -46,7 +47,7 @@ exports.addClientInfo = async (req, res) => {
     }
     const newClient = await prisma.def_client_info.create({
       data: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
         browser_name: browser_name || "Undefined",
         browser_version: browser_version || "Undefined",
         browser_type: browser_type || "Undefined",
@@ -55,7 +56,7 @@ exports.addClientInfo = async (req, res) => {
         device_model: device_model || "Undefined",
         device_vendor: device_vendor || "Undefined",
         engine_name: engine_name || "Undefined",
-        engine_version: engineVersion || "Undefined",
+        engine_version: engine_version || "Undefined",
         os_name: os_name || "Undefined",
         os_version: os_version || "Undefined",
         user_agent: user_agent || "Undefined",
@@ -78,6 +79,7 @@ exports.addClientInfo = async (req, res) => {
       result: newClient,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ error: error.message });
   }
 };

@@ -4,5 +4,6 @@ const clientLocationInfo = require("../Controller/defClientLocationInfoControlle
 const router = Router();
 
 router.post("/", clientLocationInfo.addClientLocationInfo);
+router.get("/", clientLocationInfo.getClientLocationInfo);
 
 module.exports = router;
