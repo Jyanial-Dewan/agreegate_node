@@ -298,7 +298,7 @@ exports.changeUserPassword = async (req, res) => {
             user_id: Number(user_id),
           },
           data: {
-            password: await hashPassword(old_password),
+            password: await hashPassword(new_password),
           },
         });
         if (userPassword) {
@@ -307,10 +307,10 @@ exports.changeUserPassword = async (req, res) => {
             .json({ message: "Password is updated Successfully " });
         }
       } else {
-        return res.status(401).json({ message: "Invalid password." });
+        return res.status(403).json({ message: "Invalid password." });
       }
     }
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
