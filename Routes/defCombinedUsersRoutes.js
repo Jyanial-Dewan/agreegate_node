@@ -5,8 +5,8 @@ const { upload, generateThumbnail } = require("../Middleware/multerUpload");
 const router = Router();
 
 router.post("/register", defCombinedUsersController.createCombinedUser);
-router.get("/:userId", defCombinedUsersController.getSingleCombinedUser);
-router.put("/:userId", defCombinedUsersController.updateCombinedUser);
+router.get("/", defCombinedUsersController.getCombinedUser);
+router.put("/:user_id", defCombinedUsersController.updateCombinedUser);
 router.put(
   "/update_profile_image/:user_id",
   // (req, res, next) => {

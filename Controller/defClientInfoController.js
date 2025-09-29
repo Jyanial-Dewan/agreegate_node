@@ -83,3 +83,42 @@ exports.addClientInfo = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
+exports.getClientInfo = async (req, res) => {
+  const { user_id, device_id } = req.query;
+
+  try {
+    if (!device_id) {
+      const infos = await prisma.def_client_info.findMany({
+        where: {
+          user_id: Number(user_id),
+        },
+      });
+
+      const total = await prisma.def_client_info.count({
+        where: {
+          user_id: Number(user_id),
+        },
+      });
+      return res.status(200).json({
+        result: infos,
+        totalData: total,
+      });
+    }
+
+    if (device_id && user_id) {
+      const info = await prisma.def_client_info.findFirst({
+        where: {
+          user_id: Number(user_id),
+          device_id: Number(device_id),
+        },
+      });
+
+      return res.status(200).json({
+        result: info,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
