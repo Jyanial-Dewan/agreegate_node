@@ -14,9 +14,9 @@ routes.use("/api/users", defUsersRoutes);
 routes.use("/api/geo", ipRoutes);
 routes.use("/api/client_info", defClientInfoRoutes);
 routes.use("/api/client_location_info", defClientLocationInfoRoutes);
+routes.use("/api/combined_users", defCombinedUsersRoutes);
 routes.use(verifyUser);
 
-routes.use("/api/combined_users", defCombinedUsersRoutes);
 routes.use("/api/auth/verify_user", authUserRoutes);
 
 module.exports = routes;

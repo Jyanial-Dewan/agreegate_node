@@ -76,10 +76,10 @@ exports.createCombinedUser = async (req, res) => {
       password,
     } = req.body;
 
-    const profile_picture = {
-      original: "uploads/profiles/default/profile.jpg",
-      thumbnail: "uploads/profiles/default/thumbnail.jpg",
-    };
+    // const profile_picture = {
+    //   original: "uploads/profiles/default/profile.jpg",
+    //   thumbnail: "uploads/profiles/default/thumbnail.jpg",
+    // };
 
     const existUser = await prisma.def_users.findFirst({
       where: {
@@ -92,13 +92,26 @@ exports.createCombinedUser = async (req, res) => {
         message: "Username is already exist.",
       });
     }
+    const existEmail = await prisma.def_users.findFirst({
+      where: {
+        email_addresses: {
+          array_contains: email_address,
+        },
+      },
+    });
+
+    if (existEmail) {
+      return res.status(409).json({
+        message: "Email is already exist.",
+      });
+    }
 
     const newUser = await prisma.def_users.create({
       data: {
         user_name: user_name,
         user_type: user_type,
         email_addresses: [email_address],
-        profile_picture: profile_picture,
+        // profile_picture: profile_picture,
       },
     });
 
