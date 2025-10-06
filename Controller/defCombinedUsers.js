@@ -71,6 +71,7 @@ exports.createCombinedUser = async (req, res) => {
       user_type,
       user_name,
       email_address,
+      phone_number,
       first_name,
       last_name,
       password,
@@ -92,11 +93,10 @@ exports.createCombinedUser = async (req, res) => {
         message: "Username is already exist.",
       });
     }
+
     const existEmail = await prisma.def_users.findFirst({
       where: {
-        email_addresses: {
-          array_contains: email_address,
-        },
+        emai_address: email_address,
       },
     });
 
@@ -106,11 +106,24 @@ exports.createCombinedUser = async (req, res) => {
       });
     }
 
+    const existPhone = await prisma.def_users.findFirst({
+      where: {
+        phone_number: phone_number,
+      },
+    });
+
+    if (existPhone) {
+      return res.status(409).json({
+        message: "Phone number is already exist.",
+      });
+    }
+
     const newUser = await prisma.def_users.create({
       data: {
         user_name: user_name,
         user_type: user_type,
-        email_addresses: [email_address],
+        emai_address: email_address,
+        phone_number: phone_number,
         // profile_picture: profile_picture,
       },
     });
@@ -148,8 +161,14 @@ exports.createCombinedUser = async (req, res) => {
 
 exports.updateCombinedUser = async (req, res) => {
   try {
-    const { user_type, user_name, email_address, first_name, last_name } =
-      req.body;
+    const {
+      user_type,
+      user_name,
+      email_address,
+      first_name,
+      last_name,
+      phone_number,
+    } = req.body;
     const { user_id } = req.params;
 
     const profile_picture = {
@@ -157,11 +176,23 @@ exports.updateCombinedUser = async (req, res) => {
       thumbnail: "uploads/profiles/default/thumbnail.jpg",
     };
 
+    const existPhone = await prisma.def_users.findFirst({
+      where: {
+        phone_number: phone_number,
+        NOT: {
+          user_id: Number(user_id),
+        },
+      },
+    });
+
+    if (existPhone) {
+      return res.status(409).json({
+        message: "Phone number is already exist.",
+      });
+    }
     const existEmail = await prisma.def_users.findFirst({
       where: {
-        email_addresses: {
-          array_contains: email_address,
-        },
+        emai_address: email_address,
         NOT: {
           user_id: Number(user_id),
         },
@@ -216,8 +247,9 @@ exports.updateCombinedUser = async (req, res) => {
       data: {
         user_name: user_name,
         user_type: user_type,
-        email_addresses: [email_address],
+        emai_address: email_address,
         profile_picture: profile_picture,
+        phone_number: phone_number,
       },
     });
 
