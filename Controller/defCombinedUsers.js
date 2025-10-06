@@ -26,25 +26,40 @@ const hashPassword = (password) => {
   });
 };
 
-exports.getSingleCombinedUser = async (req, res) => {
-  const { userId } = req.params;
+exports.getCombinedUser = async (req, res) => {
+  const { user_id, page = 1, limit = 8 } = req.query;
 
   try {
-    const uniqueUser = await prisma.def_users.findUnique({
+    if (!user_id) {
+      const users = await prisma.def_users_v.findMany({
+        orderBy: {
+          created_on: "desc",
+        },
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+      });
+
+      const total = await prisma.def_users_v.count();
+
+      return res.status(200).json({
+        result: users,
+        totalData: total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
+      });
+    }
+    const existUser = await prisma.def_users_v.findFirst({
       where: {
-        user_id: Number(userId),
-      },
-    });
-    const uniquePerson = await prisma.def_persons.findUnique({
-      where: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
       },
     });
 
-    if (!uniquePerson || !uniqueUser) {
+    if (!existUser) {
       return res.status(404).json({ message: "User not found" });
+    } else {
+      return res.status(200).json({ result: existUser });
     }
-    return res.status(200).json({ result: { ...uniqueUser, ...uniquePerson } });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -61,10 +76,10 @@ exports.createCombinedUser = async (req, res) => {
       password,
     } = req.body;
 
-    const profile_picture = {
-      original: "uploads/profiles/default/profile.jpg",
-      thumbnail: "uploads/profiles/default/thumbnail.jpg",
-    };
+    // const profile_picture = {
+    //   original: "uploads/profiles/default/profile.jpg",
+    //   thumbnail: "uploads/profiles/default/thumbnail.jpg",
+    // };
 
     const existUser = await prisma.def_users.findFirst({
       where: {
@@ -77,13 +92,26 @@ exports.createCombinedUser = async (req, res) => {
         message: "Username is already exist.",
       });
     }
+    const existEmail = await prisma.def_users.findFirst({
+      where: {
+        email_addresses: {
+          array_contains: email_address,
+        },
+      },
+    });
+
+    if (existEmail) {
+      return res.status(409).json({
+        message: "Email is already exist.",
+      });
+    }
 
     const newUser = await prisma.def_users.create({
       data: {
         user_name: user_name,
         user_type: user_type,
         email_addresses: [email_address],
-        profile_picture: profile_picture,
+        // profile_picture: profile_picture,
       },
     });
 
@@ -104,7 +132,7 @@ exports.createCombinedUser = async (req, res) => {
 
     if (!user_name || !user_type) {
       return res.status(422).json({
-        message: "user_name, user_type is Required",
+        message: "User Name and User Type fields are Required",
       });
     }
     if (newUser && newPerson && newCredential) {
@@ -120,24 +148,38 @@ exports.createCombinedUser = async (req, res) => {
 
 exports.updateCombinedUser = async (req, res) => {
   try {
-    const {
-      user_type,
-      user_name,
-      email_address,
-      first_name,
-      last_name,
-      password,
-    } = req.body;
-    const { userId } = req.params;
+    const { user_type, user_name, email_address, first_name, last_name } =
+      req.body;
+    const { user_id } = req.params;
 
     const profile_picture = {
       original: "uploads/profiles/default/profile.jpg",
       thumbnail: "uploads/profiles/default/thumbnail.jpg",
     };
 
+    const existEmail = await prisma.def_users.findFirst({
+      where: {
+        email_addresses: {
+          array_contains: email_address,
+        },
+        NOT: {
+          user_id: Number(user_id),
+        },
+      },
+    });
+
+    if (existEmail) {
+      return res.status(409).json({
+        message: "Email is already exist.",
+      });
+    }
+
     const existUser = await prisma.def_users.findFirst({
       where: {
         user_name,
+        NOT: {
+          user_id: Number(user_id),
+        },
       },
     });
 
@@ -149,17 +191,17 @@ exports.updateCombinedUser = async (req, res) => {
 
     const uniqueUser = await prisma.def_users.findUnique({
       where: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
       },
     });
     const uniquePerson = await prisma.def_persons.findUnique({
       where: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
       },
     });
     const uniqueCredential = await prisma.def_user_credentials.findUnique({
       where: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
       },
     });
 
@@ -169,7 +211,7 @@ exports.updateCombinedUser = async (req, res) => {
 
     const updatedUser = await prisma.def_users.update({
       where: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
       },
       data: {
         user_name: user_name,
@@ -181,7 +223,7 @@ exports.updateCombinedUser = async (req, res) => {
 
     const updatedPerson = await prisma.def_persons.update({
       where: {
-        user_id: Number(userId),
+        user_id: Number(user_id),
       },
       data: {
         first_name: first_name,
@@ -189,18 +231,9 @@ exports.updateCombinedUser = async (req, res) => {
       },
     });
 
-    await prisma.def_user_credentials.update({
-      where: {
-        user_id: Number(userId),
-      },
-      data: {
-        password: await hashPassword(password),
-      },
-    });
-
     return res.status(200).json({
       message: "User Updated",
-      user: { ...updatedUser, ...updatedPerson },
+      result: { ...updatedUser, ...updatedPerson },
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });

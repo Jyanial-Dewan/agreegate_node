@@ -82,3 +82,21 @@ model def_client_location_info {
 
   @@schema("agreegate")
 }
+
+model def_users_v {
+  user_id         Int     @id
+  user_name       String
+  user_type String?
+  first_name      String?
+ last_name       String?
+  email_addresses Json
+ created_by      Int?
+  created_on      DateTime?                 @db.Timestamp(6)
+  last_updated_by Int?
+  last_updated_on DateTime?               @db.Timestamp(6)
+ profile_picture Json
+
+  @@map("def_users_v")
+  @@schema("agreegate")
+}
+
