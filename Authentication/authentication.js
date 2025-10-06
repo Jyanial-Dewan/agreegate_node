@@ -57,13 +57,12 @@ exports.login = async (req, res) => {
       where: {
         OR: [
           {
-            email_addresses: {
-              array_contains: user,
-            },
+            emai_address: user,
           },
           {
             user_name: user,
           },
+          { phone_number: user },
         ],
       },
     });
@@ -90,11 +89,6 @@ exports.login = async (req, res) => {
           generateAccessTokenAndRefreshToken({
             isLoggedIn: true,
             user_id: userCredential.user_id,
-            // sub: String(user.user_id),
-            // user_type: user.user_type,
-            // user_name: userRecord.user_name,
-            // tenant_id: user.tenant_id,
-            // profile_picture: user.profile_picture,
             issuedAt: new Date(),
           });
 
@@ -111,10 +105,6 @@ exports.login = async (req, res) => {
           .json({
             isLoggedIn: true,
             user_id: userCredential.user_id,
-            // user_type: user.user_type,
-            // user_name: userRecord.user_name,
-            // tenant_id: user.tenant_id,
-            // profile_picture: user.profile_picture,
             access_token: accessToken,
             refresh_token: refreshToken,
             issuedAt: new Date(),
@@ -182,11 +172,6 @@ exports.refreshToken = async (req, res) => {
           generateAccessTokenAndRefreshToken({
             isLoggedIn: true,
             user_id: user.user_id,
-            // sub: String(user.user_id),
-            // user_type: user.user_type,
-            // user_name: user.user_name,
-            // tenant_id: user.tenant_id,
-            // profile_picture: user.profile_picture,
             issuedAt: new Date(),
           });
 
@@ -203,10 +188,6 @@ exports.refreshToken = async (req, res) => {
           .json({
             isLoggedIn: true,
             user_id: user.user_id,
-            // user_type: user.user_type,
-            // user_name: user.user_name,
-            // tenant_id: user.tenant_id,
-            // profile_picture: user.profile_picture,
             access_token: accessToken,
             refresh_token: refreshToken,
             issuedAt: new Date(),

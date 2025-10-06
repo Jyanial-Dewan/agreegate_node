@@ -13,12 +13,13 @@ model def_users {
   user_id         Int       @id @default(autoincrement())
   user_name       String?   @db.VarChar(20)
   user_type       String?   @db.VarChar(20)
-  email_addresses Json?
+  emai_address    String?   @db.VarChar(30)
   profile_picture Json?
   created_by      Int?
   created_on      DateTime? @default(now()) @db.Timestamp(6)
   last_updated_by Int?
   last_updated_on DateTime? @default(now()) @db.Timestamp(6)
+  phone_number    String?   @db.VarChar(20)
 
   @@schema("agreegate")
 }
@@ -89,7 +90,8 @@ model def_users_v {
   user_type String?
   first_name      String?
  last_name       String?
-  email_addresses Json
+   emai_address    String?   @db.VarChar(30)
+  phone_number    String?   @db.VarChar(20)
  created_by      Int?
   created_on      DateTime?                 @db.Timestamp(6)
   last_updated_by Int?
@@ -99,4 +101,3 @@ model def_users_v {
   @@map("def_users_v")
   @@schema("agreegate")
 }
-
