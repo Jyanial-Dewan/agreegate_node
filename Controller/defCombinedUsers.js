@@ -96,7 +96,7 @@ exports.createCombinedUser = async (req, res) => {
 
     const existEmail = await prisma.def_users.findFirst({
       where: {
-        emai_address: email_address,
+        email_address: email_address,
       },
     });
 
@@ -122,7 +122,7 @@ exports.createCombinedUser = async (req, res) => {
       data: {
         user_name: user_name,
         user_type: user_type,
-        emai_address: email_address,
+        email_address: email_address,
         phone_number: phone_number,
         // profile_picture: profile_picture,
       },
@@ -192,7 +192,7 @@ exports.updateCombinedUser = async (req, res) => {
     }
     const existEmail = await prisma.def_users.findFirst({
       where: {
-        emai_address: email_address,
+        email_address: email_address,
         NOT: {
           user_id: Number(user_id),
         },
@@ -247,7 +247,7 @@ exports.updateCombinedUser = async (req, res) => {
       data: {
         user_name: user_name,
         user_type: user_type,
-        emai_address: email_address,
+        email_address: email_address,
         profile_picture: profile_picture,
         phone_number: phone_number,
       },
