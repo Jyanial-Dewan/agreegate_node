@@ -65,6 +65,7 @@ model def_client_info {
   city                     String?                    @db.VarChar(100)
   autonomus_system         String?                    @db.VarChar(100)
   created_at               DateTime?                  @default(now()) @db.Timestamp(6)
+  is_active                Boolean?                   @default(false)
   def_client_location_info def_client_location_info[]
 
   @@schema("agreegate")
@@ -92,11 +93,11 @@ model def_users_v {
  last_name       String?
    email_address    String?   @db.VarChar(30)
   phone_number    String?   @db.VarChar(20)
- created_by      Int?
+  created_by      Int?
   created_on      DateTime?                 @db.Timestamp(6)
   last_updated_by Int?
   last_updated_on DateTime?               @db.Timestamp(6)
- profile_picture Json
+  profile_picture Json
 
   @@map("def_users_v")
   @@schema("agreegate")
