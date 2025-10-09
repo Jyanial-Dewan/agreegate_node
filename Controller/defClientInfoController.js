@@ -25,6 +25,7 @@ exports.addClientInfo = async (req, res) => {
     country,
     city,
     autonomus_system,
+    is_active,
   } = req.body;
 
   try {
@@ -71,6 +72,7 @@ exports.addClientInfo = async (req, res) => {
         city: city || "Undefined",
         autonomus_system: autonomus_system || "Undefined",
         engine_version: engine_version || "Undefined",
+        is_active: is_active,
       },
     });
 
@@ -88,7 +90,7 @@ exports.getClientInfo = async (req, res) => {
   const { user_id, device_id } = req.query;
 
   try {
-    if (!device_id) {
+    if (!device_id && user_id) {
       const infos = await prisma.def_client_info.findMany({
         where: {
           user_id: Number(user_id),
@@ -100,9 +102,16 @@ exports.getClientInfo = async (req, res) => {
           user_id: Number(user_id),
         },
       });
+      const totalActive = await prisma.def_client_info.count({
+        where: {
+          user_id: Number(user_id),
+          is_active: true,
+        },
+      });
       return res.status(200).json({
         result: infos,
         totalData: total,
+        totalActive,
       });
     }
 

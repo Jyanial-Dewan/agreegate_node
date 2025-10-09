@@ -33,6 +33,15 @@ const socket = (io) => {
       "ClientLocation",
       async ({ latitude, longitude, device_id, user_id }) => {
         try {
+          await prisma.def_client_info.update({
+            where: {
+              device_id: Number(device_id),
+              user_id: Number(user_id),
+            },
+            data: {
+              is_active: true,
+            },
+          });
           await axios.post(`${nodeUrl}/api/client_location_info`, {
             connection_id: socket.id,
             device_id,
@@ -53,6 +62,14 @@ const socket = (io) => {
         },
       });
       if (connection) {
+        await prisma.def_client_info.update({
+          where: {
+            device_id: connection.device_id,
+          },
+          data: {
+            is_active: false,
+          },
+        });
         await prisma.def_client_location_info.update({
           where: {
             connection_id: connection.connection_id,
