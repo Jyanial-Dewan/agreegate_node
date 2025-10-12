@@ -29,7 +29,8 @@ const deleteExistingImages = async (folderPath) => {
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     try {
-      const userFolder = path.join(UPLOAD_FOLDER, req.user.user_id.toString());
+      const { user_id } = req.params;
+      const userFolder = path.join(UPLOAD_FOLDER, user_id);
       await deleteExistingImages(userFolder);
       if (!fs.existsSync(userFolder)) {
         fs.mkdirSync(userFolder, { recursive: true });
@@ -62,12 +63,13 @@ const upload = multer({
 
 // Middleware to generate a compressed thumbnail
 const generateThumbnail = async (req, res, next) => {
+  const { user_id } = req.params;
   if (!req.file) {
     return next();
   }
 
   try {
-    const userFolder = path.join(UPLOAD_FOLDER, req.user.user_id.toString());
+    const userFolder = path.join(UPLOAD_FOLDER, user_id.toString());
     const filePath = path.join(userFolder, req.file.filename);
     const thumbnailPath = path.join(
       userFolder,
